@@ -7,27 +7,60 @@ import {
     useNodesState,
     useEdgesState,
     addEdge,
+    ConnectionMode,
+    ConnectionLineType,
 } from '@xyflow/react';
-
 import colors from 'tailwindcss/colors' 
+
+import { NODE_TYPES } from './constants/nodeTypes';
 
 import '@xyflow/react/dist/style.css';
 import './global.css';
  
-const initialNodes = [
-    { id: '1', position: { x: 0, y: 0 }, data: { label: '1' } },
-    { id: '2', position: { x: 0, y: 100 }, data: { label: '2' } },
-];
-const initialEdges = [{ id: 'e1-2', source: '1', target: '2' }];
+const INITIAL_NODES = [
+    {
+        id: '1',
+        type: 'square',
+        position: {
+            x: 0,
+            y: 0,
+        },
+        data: {},
+    },
+    {
+        id: '2',
+        type: 'square',
+        position: {
+            x: 500,
+            y: 0,
+        },
+        data: {},
+    }
+] satisfies Node[]
+
+const initialEdges = [
+    {
+        id: 'e1-2',
+        source: '1',
+        target: '2',
+        type: 'step',
+    },
+    {
+        id: 'e1-2',
+        source: '1',
+        target: '2',
+        type: 'step',
+    }
+] 
  
 export default function App() {
-    const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+    const [nodes, setNodes, onNodesChange] = useNodesState(INITIAL_NODES);
     const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
-    const onConnect = useCallback(
-        (params) => setEdges((eds) => addEdge(params, eds)),
-        [setEdges],
-    );
+    const onConnect = useCallback((connection) => {
+        const edge = { ...connection, type: 'step' };
+        setEdges((eds) => addEdge(edge, eds));
+    }, [setEdges]);
 
     return (
         <div className="w-screen h-screen">
@@ -37,10 +70,13 @@ export default function App() {
                 onNodesChange={onNodesChange}
                 onEdgesChange={onEdgesChange}
                 onConnect={onConnect}
+                nodeTypes={NODE_TYPES}
+                connectionMode={ConnectionMode.Loose}
+                connectionLineType={ConnectionLineType.Step}
             >
                 <Controls />
-                <MiniMap />
-                <Background 
+                    <MiniMap />
+                    <Background 
                     variant="dots" 
                     gap={12} 
                     size={2} 
