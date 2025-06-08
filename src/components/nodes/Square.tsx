@@ -1,7 +1,9 @@
 import type { NodeProps } from '@xyflow/react';
 import { Handle, Position, NodeResizer } from '@xyflow/react';
 
-export default function Square({ selected }: NodeProps) {
+export default function Square({ selected, data }: NodeProps) {
+    const showHandles = selected || data?.isConnectingTarget;
+
     return (
         <div className="bg-violet-500 rounded w-full h-full min-w-[200px] min-h-[200px] relative">
             <NodeResizer
@@ -13,27 +15,27 @@ export default function Square({ selected }: NodeProps) {
             />
             <Handle 
                 id="top"
-                type='source'
+                type="source"
                 position={Position.Top}
-                className={`!-top-5 !w-3 !h-3 !bg-blue-400/80 ${selected ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+                className={`!-top-5 !w-3 !h-3 !bg-blue-400/80 ${showHandles ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
             />
             <Handle 
                 id="right" 
-                type='source' 
+                type="source" 
                 position={Position.Right}
-                className={`!-right-5 !w-3 !h-3 !bg-blue-400/80 ${selected ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+                className={`!-right-5 !w-3 !h-3 !bg-blue-400/80 ${showHandles ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
             />
             <Handle 
                 id="bottom"
-                type='source'
+                type="source"
                 position={Position.Bottom}
-                className={`!-bottom-5 !w-3 !h-3 !bg-blue-400/80 ${selected ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+                className={`!-bottom-5 !w-3 !h-3 !bg-blue-400/80 ${showHandles ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
             />
             <Handle 
                 id="left" 
-                type='source' 
+                type="source" 
                 position={Position.Left}
-                className={`!-left-5 !w-3 !h-3 !bg-blue-400/80 ${selected ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+                className={`!-left-5 !w-3 !h-3 !bg-blue-400/80 ${showHandles ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
             />
         </div>
     );
