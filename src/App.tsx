@@ -1,4 +1,5 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useRef } from 'react'; 
+import * as Toolbar from '@radix-ui/react-toolbar';
 import {
     ReactFlow,
     MiniMap,
@@ -9,61 +10,58 @@ import {
     addEdge,
     ConnectionMode,
     ConnectionLineType,
+    useReactFlow,
 } from '@xyflow/react';
-import colors from 'tailwindcss/colors' 
+import '@xyflow/react/dist/style.css';
+import colors from 'tailwindcss/colors';
 
 import { NODE_TYPES } from './constants/nodeTypes';
 
-import '@xyflow/react/dist/style.css';
 import './global.css';
- 
-const INITIAL_NODES = [
-    {
-        id: '1',
-        type: 'square',
-        position: {
-            x: 0,
-            y: 0,
-        },
-        data: {},
-    },
-    {
-        id: '2',
-        type: 'square',
-        position: {
-            x: 500,
-            y: 0,
-        },
-        data: {},
-    }
-] satisfies Node[]
 
-const initialEdges = [
-    {
-        id: 'e1-2',
-        source: '1',
-        target: '2',
-        type: 'step',
-    },
-    {
-        id: 'e1-2',
-        source: '1',
-        target: '2',
-        type: 'step',
-    }
-] 
- 
 export default function App() {
-    const [nodes, setNodes, onNodesChange] = useNodesState(INITIAL_NODES);
-    const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+    const reactFlowWrapper = useRef(null); 
+    const [nodes, setNodes, onNodesChange] = useNodesState([]);
+    const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+    const { screenToFlowPosition } = useReactFlow();
 
     const onConnect = useCallback((connection) => {
         const edge = { ...connection, type: 'step' };
         setEdges((eds) => addEdge(edge, eds));
     }, [setEdges]);
 
+    const onDragStart = (event, nodeType) => {
+        event.dataTransfer.setData('application/reactflow', nodeType);
+        event.dataTransfer.effectAllowed = 'move';
+    };
+
+    const onDragOver = useCallback((event) => {
+        event.preventDefault();
+        event.dataTransfer.dropEffect = 'move';
+    }, []);
+
+    const onDrop = useCallback((event) => {
+        event.preventDefault();
+
+        const type = event.dataTransfer.getData('application/reactflow');
+
+        const position = screenToFlowPosition({
+            x: event.clientX,
+            y: event.clientY,
+        });
+
+        const newNode = {
+            id: crypto.randomUUID(),
+            type,
+            position,
+            data: {},
+        };
+
+        setNodes((nds) => nds.concat(newNode));
+    }, [screenToFlowPosition, setNodes]);
+
     return (
-        <div className="w-screen h-screen">
+        <div className="w-screen h-screen" ref={reactFlowWrapper} onDragOver={onDragOver} onDrop={onDrop}>
             <ReactFlow
                 nodes={nodes}
                 edges={edges}
@@ -75,14 +73,20 @@ export default function App() {
                 connectionLineType={ConnectionLineType.Step}
             >
                 <Controls />
-                    <MiniMap />
-                    <Background 
+                <Background 
                     variant="dots" 
                     gap={12} 
                     size={2} 
                     color={colors.zinc[200]} 
                 />
             </ReactFlow>
+            <Toolbar.Root className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-white rounded-2xl shadow-lg border border-zinc-300 px-8 h-20 w-3xl overflow-hidden">
+                <Toolbar.Button
+                    onDragStart={(event) => onDragStart(event, 'square')}
+                    draggable
+                    className="w-32 h-32 mt-6 bg-violet-500 rounded transition-transform hover:-translate-y-2 cursor-grab" 
+                />
+            </Toolbar.Root>
         </div>
     );
 }
