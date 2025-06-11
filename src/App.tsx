@@ -37,7 +37,7 @@ export default function App() {
     }, [isConnecting, setNodes]);
 
     const onConnect = useCallback(
-        (connection) => setEdges((edges) => addEdge({ ...connection, type: 'step' }, edges)),
+        (connection) => setEdges((edges) => addEdge({ ...connection, type: 'step', style: { stroke: colors.zinc[400], strokeWidth: 3 }  }, edges)),
         [setEdges]
     );
 
@@ -90,6 +90,7 @@ export default function App() {
                 nodeTypes={NODE_TYPES}
                 connectionMode={ConnectionMode.Loose}
                 connectionLineType={ConnectionLineType.Step}
+                connectionLineStyle={{ stroke: colors.zinc[400], strokeWidth: 3 }}
                 isValidConnection={(conn) => conn.source !== conn.target}
             >
                 <Controls />
@@ -97,7 +98,7 @@ export default function App() {
                     variant="dots"
                     gap={12}
                     size={2}
-                    color={colors.zinc[200]}
+                    color={colors.zinc[300]}
                 />
             </ReactFlow>
 
