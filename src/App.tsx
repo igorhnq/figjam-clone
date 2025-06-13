@@ -106,7 +106,7 @@ export default function App() {
                 <Toolbar.Button
                     onDragStart={(event) => onDragStart(event, 'square')}
                     draggable
-                    className="w-32 h-32 mt-6 bg-violet-500 rounded transition-transform hover:-translate-y-2 cursor-grab"
+                    className="w-32 h-32 mt-6 bg-pink-300 rounded transition-transform hover:-translate-y-2 cursor-grab"
                 />
             </Toolbar.Root>
         </div>
