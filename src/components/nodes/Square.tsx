@@ -22,11 +22,12 @@ export default function Square({ selected, data, id }: NodeProps) {
                 isVisible={selected}
                 lineClassName='!border-blue-400'
                 handleClassName='!h-3 !w-3 !bg-white !border-2 !rounded !border-blue-400'
+                keepAspectRatio
             />
             <textarea
                 value={text}
                 onChange={handleChange}
-                className="bg-none text-black rounded  resize-none focus:outline-none w-full h-full text-left text-neutral-800"
+                className="bg-none text-black rounded  resize-none focus:outline-none w-full h-full text-left text-neutral-800 placeholder:opacity-70 placeholder:font-medium font-medium"
                 placeholder="Type anything... @mention anyone"
             />
             <Handle 
